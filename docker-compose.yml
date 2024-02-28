@@ -1,0 +1,86 @@
+version: '3.7'
+
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: "${COMPOSE_PROJECT_NAME}-nginx"
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "${HOST_MACHINE_UNSECURE_HOST_PORT}:80"
+    volumes:
+      - ./src:/var/www
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+      - mysql
+    networks:
+      - lara-network
+    
+  app:
+    build:
+      args:
+        user: ubuntu
+        uid: 1000
+      context: .
+      dockerfile: Dockerfile
+    image: coffeeadmin
+    container_name: "${COMPOSE_PROJECT_NAME}-php"
+    tty: true
+    volumes: 
+      - ./src:/var/www
+      - ./init/php.ini:/usr/local/etc/php/conf.d/wp-php.ini
+    networks:
+      - lara-network
+
+  mysql:
+    image: mysql:8.0
+    container_name: "${COMPOSE_PROJECT_NAME}-db"
+    hostname: mysqlDB
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${HOST_MACHINE_MYSQL_PORT}:3306"
+    volumes:
+      - ${MYSQL_INITDB_DIR-./config/initdb}:/docker-entrypoint-initdb.d
+      - ${MYSQL_DATA_DIR-./data/mysql}:/var/lib/mysql
+      - ${MYSQL_LOG_DIR-./logs/mysql}:/var/log/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    networks: 
+      - lara-network
+
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: "${COMPOSE_PROJECT_NAME}-phpmyadmin"
+    restart: unless-stopped
+    depends_on:
+      - mysql
+    links:
+      - mysql
+    environment:
+      PMA_HOST: mysqlDB
+      PMA_PORT: ${HOST_MACHINE_MYSQL_PORT}
+      PMA_USER: root
+      PMA_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      UPLOAD_LIMIT: ${UPLOAD_LIMIT}
+      MEMORY_LIMIT: ${MEMORY_LIMIT}
+    ports:
+      - "${HOST_MACHINE_PMA_PORT}:80"
+      - "${HOST_MACHINE_PMA_SECURE_PORT}:443"
+    volumes:
+      - /sessions
+      - ${PHP_INI-./php/php.ini}:/usr/local/etc/php/conf.d/php-phpmyadmin.ini
+    networks: 
+      - lara-network
+
+networks:
+  lara-network:
+    driver: bridge
