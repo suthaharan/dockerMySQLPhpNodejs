@@ -8,7 +8,7 @@ In this guide, we’ll use Docker Compose to containerize a Laravel application 
 ## How to use
 
 - Clone this repo
-- Rename sample.env to .env file and make the necessary changes 
+- Make the necessary changes to .env file
 - Put the laravel web application inside src/ folder
 - Useful docker commands to build and navigate docker containers
 ```
