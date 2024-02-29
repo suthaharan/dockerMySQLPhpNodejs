@@ -22,6 +22,8 @@ In this guide, we’ll use Docker Compose to containerize a Laravel application 
 - $ docker-compose logs nginx
 - $ docker-compose down
 ```
-- For testing purpose an index file is added to src/public folder which can be viewed at http://localhost
+- For testing purpose, an index file is added to src/public folder which can be viewed at http://localhost:8000
 - nginx settings can be added under nginx/default.conf
+- The .env file in the root folder is used for docker-compose set up
 - PhpMyAdmin can be accessed under http://localhost:8081
+- To set up Laravel inside the container, create the application inside the src/ folder. The .env file of the Laravel application will make use of the database name/hostname from the docker-compose container settings.
