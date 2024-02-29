@@ -1,7 +1,7 @@
 # PHP+nginx+MySQL+PHPMyAdmin for Laravel on Docker (2024)
-In this guide, we’ll use Docker Compose to containerize a Laravel application for development. When you’re finished, you’ll have a demo Laravel application running on three separate service containers:
+In this guide, we’ll use Docker Compose to containerize a Laravel application for development. When you’re finished, you’ll have a demo Laravel application running:
 
-* An app service running PHP7.4-FPM;
+* An app service running PHP8.0-FPM;
 * A db service running MySQL 8.0;
 * An nginx service that uses the app service to parse PHP code before serving the Laravel application to the final user.
 
