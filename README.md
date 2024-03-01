@@ -27,3 +27,9 @@ In this guide, we’ll use Docker Compose to containerize a Laravel application 
 - The .env file in the root folder is used for docker-compose set up
 - PhpMyAdmin can be accessed under http://localhost:8081
 - To set up Laravel inside the container, create the application inside the src/ folder. The .env file of the Laravel application will make use of the database name/hostname from the docker-compose container settings.
+
+* Some useful docker commands
+```
+$ docker-compose exec -it app bash (as default user)
+$ docker-compose exec -u 0 -it app bash (as root)
+```
